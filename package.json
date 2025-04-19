@@ -1,0 +1,27 @@
+{
+  "name": "maestro",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@enable3d/phaser-extension": "^0.26.1",
+    "enable3d": "^0.26.1",
+    "phaser": "^3.88.2",
+    "vite": "^6.3.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.24.0",
+    "eslint": "^9.24.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.0.0",
+    "prettier": "3.5.3"
+  }
+}
