@@ -27,46 +27,38 @@ export default class Character extends Phaser.GameObjects.Sprite {
     }
 
     togglePlay() {
-        const playingCharacters = this.scene.characters.filter(
-            (c) => c.isPlaying
-        );
-
         if (this.isPlaying) {
             this.scene.sound.stopByKey(this.soundKey);
             this.setAlpha(0.5);
             this.anims.play(this.idleAnimKey);
             this.isPlaying = false;
+    
+            this.scene.armedCharacters = this.scene.armedCharacters.filter(c => c !== this);
+            this.scene.stopLoopTimerIfEmpty();
             return;
         }
-
-        if (playingCharacters.length === 0) {
+    
+        const someonePlaying = [...this.scene.characters, ...this.scene.extraCharacters].some(c => c.isPlaying);
+    
+        if (!someonePlaying) {
             this.startPlaying();
-        } else {
-            const firstPlayingCharacter = playingCharacters[0];
-            const firstTrack = this.scene.sound.get(
-                firstPlayingCharacter.soundKey
-            );
-
-            if (firstTrack) {
-                const trackDuration = firstTrack.duration;
-                const currentTime = firstTrack.seek || 0;
-                const timeRemaining = (trackDuration - currentTime) * 1000;
-
-                this.scene.time.delayedCall(timeRemaining, () => {
-                    if (!this.isPlaying) {
-                        this.startPlaying();
-                    }
-                });
-            } else {
-                this.startPlaying();
-            }
+        
+            this.scene.currentLoopIndex = 0;
+            this.scene.updateLoopMeter();
+            this.scene.startLoopTimer();
+            return;
+        }        
+    
+        if (!this.scene.armedCharacters.includes(this)) {
+            this.scene.armedCharacters.push(this);
+            this.setAlpha(0.75);
         }
-    }
+    }    
 
     startPlaying() {
         this.scene.sound.play(this.soundKey, { loop: true });
         this.setAlpha(1);
         this.anims.play(this.playingAnimKey);
         this.isPlaying = true;
-    }
+    }    
 }

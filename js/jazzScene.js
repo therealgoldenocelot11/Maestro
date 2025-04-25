@@ -4,6 +4,8 @@ export default class JazzScene extends Phaser.Scene {
     constructor() {
         super({ key: 'JazzScene' });
         this.characters = [];
+        this.extraCharacters = [];
+        this.currentLoopIndex = 0;
     }
 
     preload() {
@@ -11,15 +13,107 @@ export default class JazzScene extends Phaser.Scene {
     }
 
     create() {
+        this.loopDuration = 8000;
+        this.armedCharacters = [];
+        this.loopTimer = null;
+
         this.setupBackground();
         this.createTitle();
         this.createAnimations();
         this.createCharacters();
+        this.createExtraCharacters();
         this.createUIButtons();
+        this.createCurtain();
+        this.createLoopMeter();
+    }
+
+    createLoopMeter() {
+        this.loopLights = [];
+    
+        const total = 8;
+        const spacing = 120;
+        const startX = this.cameras.main.centerX - (spacing * (total - 1)) / 2;
+        const y = 40;
+    
+        for (let i = 0; i < total; i++) {
+            const light = this.add
+                .image(startX + i * spacing, y, 'loop_light')
+                .setAlpha(0.1)
+                .setScale(0.1)
+                .setDepth(10);
+            this.loopLights.push(light);
+        }
+    
+        this.currentLoopIndex = 0;
+    }    
+
+    updateLoopMeter() {
+        this.loopLights.forEach((light, i) => {
+            light.setAlpha(i === this.currentLoopIndex ? 0.5 : 0.1);
+        });
+    }           
+
+    startLoopTimer() {
+        if (this.loopTimer) return;
+    
+        const beatInterval = this.loopDuration / 8;
+    
+        this.loopTimer = this.time.addEvent({
+            delay: beatInterval,
+            loop: true,
+            callback: () => {
+                this.currentLoopIndex = (this.currentLoopIndex + 1) % 8;
+                this.updateLoopMeter();
+    
+                if (this.currentLoopIndex === 0) {
+                    this.startArmedCharacters();
+                }
+            },
+        });
+    }      
+
+    stopLoopTimerIfEmpty() {
+        const anyPlaying = [...this.characters, ...this.extraCharacters].some(c => c.isPlaying);
+        if (!anyPlaying) {
+            this.loopTimer?.remove();
+            this.loopTimer = null;
+    
+            this.armedCharacters = [];
+            this.currentLoopIndex = 0;
+    
+            this.loopLights.forEach(light => light.setAlpha(0.1));
+        }
+    }    
+
+    startArmedCharacters() {
+        this.armedCharacters.forEach((char) => {
+            if (!char.isPlaying) {
+                char.startPlaying();
+            }
+        });
+        this.armedCharacters = [];
+    }    
+
+    createCurtain() {
+        this.curtain = this.add
+            .image(this.cameras.main.centerX, -720, 'curtain')
+            .setOrigin(0.5, 0.5)
+            .setDepth(1000);
     }
 
     loadAssets() {
         this.load.image('theFlam', 'assets/images/theflamingo.png');
+        this.load.image('curtain', 'assets/images/curtain.png');
+        this.load.image('loop_light', 'assets/images/loop_light.png');
+
+        const extraCharacters = [
+            { name: 'jazz_2_bass', sprite: 'bassist' },
+            { name: 'jazz_2_celeste', sprite: 'elec_piano' },
+            { name: 'jazz_2_drums', sprite: 'drummer' },
+            { name: 'jazz_2_organ', sprite: 'piano' },
+            { name: 'jazz_2_sax', sprite: 'sax' },
+            { name: 'jazz_2_trump', sprite: 'trom' },
+        ];
 
         const soundEffects = [
             'drum',
@@ -31,6 +125,10 @@ export default class JazzScene extends Phaser.Scene {
         ];
         soundEffects.forEach((sound) =>
             this.load.audio(sound, `assets/sound effects/jazz_${sound}.ogg`)
+        );
+
+        extraCharacters.forEach(({ name }) =>
+            this.load.audio(name, `assets/sound effects/${name}.ogg`)
         );
 
         const characters = [
@@ -137,6 +235,36 @@ export default class JazzScene extends Phaser.Scene {
         });
     }
 
+    createExtraCharacters() {
+        const startX = 110;
+        const spacing = 205;
+
+        const data = [
+            { name: 'jazz_2_drums', sprite: 'drummer' },
+            { name: 'jazz_2_bass', sprite: 'bassist' },
+            { name: 'jazz_2_celeste', sprite: 'elec_piano' },
+            { name: 'jazz_2_organ', sprite: 'piano' },
+            { name: 'jazz_2_sax', sprite: 'sax' },
+            { name: 'jazz_2_trump', sprite: 'trom' },
+        ];
+
+        data.forEach(({ name, sprite }, i) => {
+            const character = new Character(
+                this,
+                startX + i * spacing,
+                480,
+                sprite,
+                name,
+                `${sprite}_idle`,
+                `${sprite}_playing`,
+                8
+            );
+            character.setDisplaySize(225, 225);
+            character.setVisible(false); // Start hidden
+            this.extraCharacters.push(character);
+        });
+    }
+
     createUIButtons() {
         const buttonLabels = ['Song 1', 'Song 2', 'Next Genre'];
         const buttonWidth = 400;
@@ -189,22 +317,88 @@ export default class JazzScene extends Phaser.Scene {
     handleButtonClick(label) {
         if (label === 'Song 1') {
             console.log('Song 1 Clicked');
+            this.playCurtainTransition(() => {
+                this.stopAllCharacters();
+                this.cleanupTimers();
+                this.extraCharacters.forEach((c) => c.setVisible(false));
+                this.characters.forEach((c) => c.setVisible(true));
+            });
         } else if (label === 'Song 2') {
             console.log('Song 2 Clicked');
+            this.playCurtainTransition(() => {
+                this.stopAllCharacters();
+                this.cleanupTimers();
+                this.characters.forEach((c) => c.setVisible(false));
+                this.extraCharacters.forEach((c) => c.setVisible(true));
+            });
         } else if (label === 'Next Genre') {
             this.switchToSubway();
         }
-    }
+    }    
 
     async switchToSubway() {
         console.log('Loading SubwayScene...');
+    
+        this.stopAllCharacters();
+        this.cleanupTimers();
+    
         const module = await import('./subwayScene.js');
         const SubwayScene = module.default;
-
+    
         if (!this.scene.get('SubwayScene')) {
             this.scene.add('SubwayScene', SubwayScene);
         }
-
+    
         this.scene.start('SubwayScene');
+    }    
+
+    stopAllCharacters() {
+        [...this.characters, ...this.extraCharacters].forEach((c) => {
+            if (c.isPlaying) {
+                this.sound.stopByKey(c.soundKey);
+                c.setAlpha(0.5);
+                c.anims.play(c.idleAnimKey);
+                c.isPlaying = false;
+            }
+        });
     }
+
+    playCurtainTransition(switchCallback) {
+        this.currentBeat = 0;
+        [...this.characters, ...this.extraCharacters].forEach((c) =>
+            c.updateBeat?.(this.currentBeat)
+        );
+
+        this.tweens.add({
+            targets: this.curtain,
+            y: 360,
+            duration: 500,
+            ease: 'Sine.easeIn',
+            onComplete: () => {
+                switchCallback();
+                this.time.delayedCall(400, () => {
+                    this.tweens.add({
+                        targets: this.curtain,
+                        y: -720,
+                        duration: 500,
+                        ease: 'Sine.easeOut',
+                    });
+                });
+            },
+        });
+    }
+
+    cleanupTimers() {
+        if (this.loopTimer) {
+            this.loopTimer.remove();
+            this.loopTimer = null;
+        }
+    
+        this.armedCharacters = [];
+        this.currentLoopIndex = 0;
+    
+        if (this.loopLights) {
+            this.loopLights.forEach((l) => l.setAlpha(0.1));
+        }
+    }    
 }
