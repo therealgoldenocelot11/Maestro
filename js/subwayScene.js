@@ -28,7 +28,6 @@ export default class SubwayScene extends Scene3D {
     }
 
     async create() {
-
         this.third.lights.ambientLight({ intensity: 0.5 });
 
         const gltf = await this.third.load.gltf(
@@ -258,6 +257,6 @@ export default class SubwayScene extends Scene3D {
                     this.scene.start('TransitionScene');
                 }
             });
-        }  
+        }
     }
 }

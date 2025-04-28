@@ -6,19 +6,31 @@ export default class SettingsScene extends Phaser.Scene {
 
     create() {
         this.titleText = this.add
-            .text(640, 100, 'Settings', { fontSize: '96px', fill: '#fff', fontFamily: 'MainText' })
+            .text(640, 100, 'Settings', {
+                fontSize: '96px',
+                fill: '#fff',
+                fontFamily: 'MainText',
+            })
             .setOrigin(0.5);
 
         this.musicText = this.add
-            .text(540, 300, 'Music Volume', { fontSize: '36px', fill: '#fff', fontFamily: 'MainText' })
+            .text(540, 300, 'Music Volume', {
+                fontSize: '36px',
+                fill: '#fff',
+                fontFamily: 'MainText',
+            })
             .setOrigin(0.5);
 
         this.volumeText = this.add
-            .text(740, 300, '50%', { fontSize: '36px', fill: '#fff', fontFamily: 'MainText' })
+            .text(790, 300, '50%', {
+                fontSize: '36px',
+                fill: '#fff',
+                fontFamily: 'MainText',
+            })
             .setOrigin(0.5);
 
-        this.createButton('-', 380, 300, () => this.adjustVolume(-10));
-        this.createButton('+', 820, 300, () => this.adjustVolume(10));
+        this.createButton('-', 320, 300, () => this.adjustVolume(-10));
+        this.createButton('+', 880, 300, () => this.adjustVolume(10));
 
         this.createButton('Back', 640, 600, () =>
             this.scene.start('MenuScene')
@@ -30,7 +42,7 @@ export default class SettingsScene extends Phaser.Scene {
             .text(x, y, text, {
                 fontSize: '48px',
                 fill: '#fff',
-                fontFamily: 'MainText'
+                fontFamily: 'MainText',
             })
             .setOrigin(0.5)
             .setInteractive();

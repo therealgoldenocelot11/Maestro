@@ -29,12 +29,12 @@ export default class JazzScene extends Phaser.Scene {
 
     createLoopMeter() {
         this.loopLights = [];
-    
+
         const total = 8;
         const spacing = 120;
         const startX = this.cameras.main.centerX - (spacing * (total - 1)) / 2;
         const y = 40;
-    
+
         for (let i = 0; i < total; i++) {
             const light = this.add
                 .image(startX + i * spacing, y, 'loop_light')
@@ -43,47 +43,49 @@ export default class JazzScene extends Phaser.Scene {
                 .setDepth(10);
             this.loopLights.push(light);
         }
-    
+
         this.currentLoopIndex = 0;
-    }    
+    }
 
     updateLoopMeter() {
         this.loopLights.forEach((light, i) => {
             light.setAlpha(i === this.currentLoopIndex ? 0.5 : 0.1);
         });
-    }           
+    }
 
     startLoopTimer() {
         if (this.loopTimer) return;
-    
+
         const beatInterval = this.loopDuration / 8;
-    
+
         this.loopTimer = this.time.addEvent({
             delay: beatInterval,
             loop: true,
             callback: () => {
                 this.currentLoopIndex = (this.currentLoopIndex + 1) % 8;
                 this.updateLoopMeter();
-    
+
                 if (this.currentLoopIndex === 0) {
                     this.startArmedCharacters();
                 }
             },
         });
-    }      
+    }
 
     stopLoopTimerIfEmpty() {
-        const anyPlaying = [...this.characters, ...this.extraCharacters].some(c => c.isPlaying);
+        const anyPlaying = [...this.characters, ...this.extraCharacters].some(
+            (c) => c.isPlaying
+        );
         if (!anyPlaying) {
             this.loopTimer?.remove();
             this.loopTimer = null;
-    
+
             this.armedCharacters = [];
             this.currentLoopIndex = 0;
-    
-            this.loopLights.forEach(light => light.setAlpha(0.1));
+
+            this.loopLights.forEach((light) => light.setAlpha(0.1));
         }
-    }    
+    }
 
     startArmedCharacters() {
         this.armedCharacters.forEach((char) => {
@@ -92,7 +94,7 @@ export default class JazzScene extends Phaser.Scene {
             }
         });
         this.armedCharacters = [];
-    }    
+    }
 
     createCurtain() {
         this.curtain = this.add
@@ -109,11 +111,11 @@ export default class JazzScene extends Phaser.Scene {
 
         const extraCharacters = [
             { name: 'jazz_2_bass', sprite: 'bassist' },
-            { name: 'jazz_2_celeste', sprite: 'elec_piano' },
+            { name: 'jazz_2_celeste', sprite: 'bell' },
             { name: 'jazz_2_drums', sprite: 'drummer' },
             { name: 'jazz_2_organ', sprite: 'piano' },
             { name: 'jazz_2_sax', sprite: 'sax' },
-            { name: 'jazz_2_trump', sprite: 'trom' },
+            { name: 'jazz_2_trump', sprite: 'trump' },
         ];
 
         const soundEffects = [
@@ -139,6 +141,8 @@ export default class JazzScene extends Phaser.Scene {
             'piano',
             'sax',
             'trom',
+            'bell',
+            'trump',
         ];
         characters.forEach((name) => {
             this.load.spritesheet(
@@ -166,9 +170,10 @@ export default class JazzScene extends Phaser.Scene {
             .text(
                 this.cameras.main.centerX,
                 this.cameras.main.centerY - 200,
-                'Jazz Scene',
+                'The Flamingo Club',
                 {
-                    fontSize: '96px',
+                    fontFamily: 'MainText',
+                    fontSize: '80px',
                     fill: '#fff',
                     stroke: '#000',
                     strokeThickness: 8,
@@ -186,7 +191,10 @@ export default class JazzScene extends Phaser.Scene {
             'piano',
             'sax',
             'trom',
+            'bell',
+            'trump',
         ];
+
         instruments.forEach((name) => {
             this.anims.create({
                 key: `${name}_idle`,
@@ -243,10 +251,10 @@ export default class JazzScene extends Phaser.Scene {
         const data = [
             { name: 'jazz_2_drums', sprite: 'drummer' },
             { name: 'jazz_2_bass', sprite: 'bassist' },
-            { name: 'jazz_2_celeste', sprite: 'elec_piano' },
+            { name: 'jazz_2_celeste', sprite: 'bell' },
             { name: 'jazz_2_organ', sprite: 'piano' },
             { name: 'jazz_2_sax', sprite: 'sax' },
-            { name: 'jazz_2_trump', sprite: 'trom' },
+            { name: 'jazz_2_trump', sprite: 'trump' },
         ];
 
         data.forEach(({ name, sprite }, i) => {
@@ -261,7 +269,7 @@ export default class JazzScene extends Phaser.Scene {
                 8
             );
             character.setDisplaySize(225, 225);
-            character.setVisible(false); // Start hidden
+            character.setVisible(false);
             this.extraCharacters.push(character);
         });
     }
@@ -335,46 +343,58 @@ export default class JazzScene extends Phaser.Scene {
         } else if (label === 'Next Genre') {
             this.switchToSubway();
         }
-    }    
+    }
 
     async switchToSubway() {
         this.sound.play('glitch');
-    
+
         this.input.enabled = false;
         this.stopAllCharacters();
         this.cleanupTimers();
-    
+
         this.cameras.main.fadeOut(1, 0, 0, 0);
-    
+
         this.time.delayedCall(1000, async () => {
-    
             this.cameras.main.resetFX();
             this.cameras.main.setBackgroundColor('#000000');
 
-        this.add.rectangle(0, 0, this.scale.width * 2, this.scale.height * 2, 0x000000)
-            .setOrigin(0)
-            .setDepth(9998);
-    
-            this.add.text(this.scale.width / 2, this.scale.height / 2, 'Find the gun.', {
-                fontFamily: 'MainText',
-                fontSize: '48px',
-                color: '#ffffff'
-            })
-            .setOrigin(0.5)
-            .setDepth(10000);
-    
+            this.add
+                .rectangle(
+                    0,
+                    0,
+                    this.scale.width * 2,
+                    this.scale.height * 2,
+                    0x000000
+                )
+                .setOrigin(0)
+                .setDepth(9998);
+
+            this.add
+                .text(
+                    this.scale.width / 2,
+                    this.scale.height / 2,
+                    'Find the gun.',
+                    {
+                        fontFamily: 'MainText',
+                        fontSize: '48px',
+                        color: '#ffffff',
+                    }
+                )
+                .setOrigin(0.5)
+                .setDepth(10000);
+
             this.time.delayedCall(3000, async () => {
                 const module = await import('./subwayScene.js');
                 const SubwayScene = module.default;
-    
+
                 if (!this.scene.get('SubwayScene')) {
                     this.scene.add('SubwayScene', SubwayScene);
                 }
-    
+
                 this.scene.start('SubwayScene');
             });
         });
-    }     
+    }
 
     stopAllCharacters() {
         [...this.characters, ...this.extraCharacters].forEach((c) => {
@@ -417,12 +437,12 @@ export default class JazzScene extends Phaser.Scene {
             this.loopTimer.remove();
             this.loopTimer = null;
         }
-    
+
         this.armedCharacters = [];
         this.currentLoopIndex = 0;
-    
+
         if (this.loopLights) {
             this.loopLights.forEach((l) => l.setAlpha(0.1));
         }
-    }      
+    }
 }

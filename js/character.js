@@ -32,33 +32,38 @@ export default class Character extends Phaser.GameObjects.Sprite {
             this.setAlpha(0.5);
             this.anims.play(this.idleAnimKey);
             this.isPlaying = false;
-    
-            this.scene.armedCharacters = this.scene.armedCharacters.filter(c => c !== this);
+
+            this.scene.armedCharacters = this.scene.armedCharacters.filter(
+                (c) => c !== this
+            );
             this.scene.stopLoopTimerIfEmpty();
             return;
         }
-    
-        const someonePlaying = [...this.scene.characters, ...this.scene.extraCharacters].some(c => c.isPlaying);
-    
+
+        const someonePlaying = [
+            ...this.scene.characters,
+            ...this.scene.extraCharacters,
+        ].some((c) => c.isPlaying);
+
         if (!someonePlaying) {
             this.startPlaying();
-        
+
             this.scene.currentLoopIndex = 0;
             this.scene.updateLoopMeter();
             this.scene.startLoopTimer();
             return;
-        }        
-    
+        }
+
         if (!this.scene.armedCharacters.includes(this)) {
             this.scene.armedCharacters.push(this);
             this.setAlpha(0.75);
         }
-    }    
+    }
 
     startPlaying() {
         this.scene.sound.play(this.soundKey, { loop: true });
         this.setAlpha(1);
         this.anims.play(this.playingAnimKey);
         this.isPlaying = true;
-    }    
+    }
 }
