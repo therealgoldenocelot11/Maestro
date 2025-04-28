@@ -29,6 +29,7 @@ export default class MenuScene extends Phaser.Scene {
                 fill: '#ffffff',
                 stroke: '#000000',
                 strokeThickness: 8,
+                fontFamily: 'MainText'
             })
             .setOrigin(0.5);
 
@@ -49,6 +50,7 @@ export default class MenuScene extends Phaser.Scene {
             .text(640 + xOffset, 300 + yOffset, text, {
                 fontSize: '48px',
                 fill: '#fff',
+                fontFamily: 'MainText'
             })
             .setOrigin(0.5)
             .setInteractive();

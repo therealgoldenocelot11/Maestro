@@ -6,15 +6,15 @@ export default class SettingsScene extends Phaser.Scene {
 
     create() {
         this.titleText = this.add
-            .text(640, 100, 'Settings', { fontSize: '96px', fill: '#fff' })
+            .text(640, 100, 'Settings', { fontSize: '96px', fill: '#fff', fontFamily: 'MainText' })
             .setOrigin(0.5);
 
         this.musicText = this.add
-            .text(540, 300, 'Music Volume', { fontSize: '36px', fill: '#fff' })
+            .text(540, 300, 'Music Volume', { fontSize: '36px', fill: '#fff', fontFamily: 'MainText' })
             .setOrigin(0.5);
 
         this.volumeText = this.add
-            .text(740, 300, '50%', { fontSize: '36px', fill: '#fff' })
+            .text(740, 300, '50%', { fontSize: '36px', fill: '#fff', fontFamily: 'MainText' })
             .setOrigin(0.5);
 
         this.createButton('-', 380, 300, () => this.adjustVolume(-10));
@@ -30,6 +30,7 @@ export default class SettingsScene extends Phaser.Scene {
             .text(x, y, text, {
                 fontSize: '48px',
                 fill: '#fff',
+                fontFamily: 'MainText'
             })
             .setOrigin(0.5)
             .setInteractive();

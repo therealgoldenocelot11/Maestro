@@ -3,6 +3,7 @@ import { enable3d, Canvas } from '@enable3d/phaser-extension';
 import MenuScene from './js/menuScene.js';
 import SettingsScene from './js/settingsScene.js';
 import JazzScene from './js/jazzScene.js';
+import TransitionScene from './js/transitionScene.js';
 
 window.addEventListener('load', () => {
     const video = document.getElementById('introVideo');
@@ -81,7 +82,7 @@ function startGame() {
             width: 1280,
             height: 720,
         },
-        scene: [MenuScene, SettingsScene, JazzScene],
+        scene: [MenuScene, SettingsScene, JazzScene, TransitionScene],
         ...Canvas(),
     };
 

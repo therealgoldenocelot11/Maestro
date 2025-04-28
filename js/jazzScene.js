@@ -105,6 +105,7 @@ export default class JazzScene extends Phaser.Scene {
         this.load.image('theFlam', 'assets/images/theflamingo.png');
         this.load.image('curtain', 'assets/images/curtain.png');
         this.load.image('loop_light', 'assets/images/loop_light.png');
+        this.load.audio('glitch', 'assets/sound effects/glitch.wav');
 
         const extraCharacters = [
             { name: 'jazz_2_bass', sprite: 'bassist' },
@@ -337,20 +338,43 @@ export default class JazzScene extends Phaser.Scene {
     }    
 
     async switchToSubway() {
-        console.log('Loading SubwayScene...');
+        this.sound.play('glitch');
     
+        this.input.enabled = false;
         this.stopAllCharacters();
         this.cleanupTimers();
     
-        const module = await import('./subwayScene.js');
-        const SubwayScene = module.default;
+        this.cameras.main.fadeOut(1, 0, 0, 0);
     
-        if (!this.scene.get('SubwayScene')) {
-            this.scene.add('SubwayScene', SubwayScene);
-        }
+        this.time.delayedCall(1000, async () => {
     
-        this.scene.start('SubwayScene');
-    }    
+            this.cameras.main.resetFX();
+            this.cameras.main.setBackgroundColor('#000000');
+
+        this.add.rectangle(0, 0, this.scale.width * 2, this.scale.height * 2, 0x000000)
+            .setOrigin(0)
+            .setDepth(9998);
+    
+            this.add.text(this.scale.width / 2, this.scale.height / 2, 'Find the gun.', {
+                fontFamily: 'MainText',
+                fontSize: '48px',
+                color: '#ffffff'
+            })
+            .setOrigin(0.5)
+            .setDepth(10000);
+    
+            this.time.delayedCall(3000, async () => {
+                const module = await import('./subwayScene.js');
+                const SubwayScene = module.default;
+    
+                if (!this.scene.get('SubwayScene')) {
+                    this.scene.add('SubwayScene', SubwayScene);
+                }
+    
+                this.scene.start('SubwayScene');
+            });
+        });
+    }     
 
     stopAllCharacters() {
         [...this.characters, ...this.extraCharacters].forEach((c) => {
@@ -400,5 +424,5 @@ export default class JazzScene extends Phaser.Scene {
         if (this.loopLights) {
             this.loopLights.forEach((l) => l.setAlpha(0.1));
         }
-    }    
+    }      
 }
