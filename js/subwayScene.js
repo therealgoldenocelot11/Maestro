@@ -29,7 +29,7 @@ export default class SubwayScene extends Scene3D {
 
     preload() {
         this.load.audio('background', 'assets/sound effects/untitled.ogg');
-    }    
+    }
 
     async create() {
         this.third.lights.ambientLight({ intensity: 0.5 });
@@ -38,9 +38,11 @@ export default class SubwayScene extends Scene3D {
             '/assets/models/SubwayScene.glb'
         );
 
-        this.backgroundMusic = this.sound.add('background', { loop: true, volume: 0.5 });
+        this.backgroundMusic = this.sound.add('background', {
+            loop: true,
+            volume: 0.5,
+        });
         this.backgroundMusic.play();
-
 
         const scene = gltf.scene;
         scene.updateMatrixWorld(true);
@@ -264,7 +266,7 @@ export default class SubwayScene extends Scene3D {
                 if (distance < 2) {
                     if (this.backgroundMusic) {
                         this.backgroundMusic.stop();
-                    }                    
+                    }
                     this.scene.stop('SubwayScene');
                     this.scene.start('TransitionScene');
                 }
