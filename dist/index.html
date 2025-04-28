@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Maestro</title>
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: black;
+                height: 1280;
+            }
+
+            canvas {
+                display: block;
+            }
+
+            #introVideo {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                z-index: 10;
+            }
+
+            #clickToStart {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                color: white;
+                font-size: 32px;
+                font-family: MainText;
+                z-index: 20;
+                cursor: pointer;
+            }
+
+            #skipButton {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                font-family: MainText;
+                font-size: 20px;
+                padding: 10px 20px;
+                border-radius: 8px;
+                cursor: pointer;
+                z-index: 15;
+                -webkit-user-select: none;
+                user-select: none;
+                transition: background-color 0.2s;
+                display: none;
+            }
+
+            #skipButton:hover {
+                background-color: rgba(255, 255, 255, 0.2);
+            }
+            @font-face {
+                font-family: 'MainText';
+                src: url('assets/fonts/faith.ttf') format('truetype');
+            }
+        </style>
+      <script type="module" crossorigin src="/assets/index-DkxGYeD9.js"></script>
+    </head>
+
+    <body>
+        <div id="clickToStart">Click to Start</div>
+        <video id="introVideo" width="1280" height="720" style="display: none">
+            <source src="assets/videos/Maestro Ad.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+        </video>
+        <div
+            id="volumeControl"
+            style="
+                position: absolute;
+                bottom: 30px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: none;
+                z-index: 1001;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                font-family: MainText;
+            "
+        >
+            <input
+                type="range"
+                id="volumeSlider"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.5"
+                style="width: 200px"
+            />
+            <span id="volumeText" style="color: white; font-size: 18px"
+                >50%</span
+            >
+        </div>
+        <div id="skipButton">Skip</div>
+        <script type="module" src="/assets/ammo/ammo.js"></script>
+    </body>
+</html>

@@ -31,7 +31,7 @@ export default class SubwayScene extends Scene3D {
         this.third.lights.ambientLight({ intensity: 0.5 });
 
         const gltf = await this.third.load.gltf(
-            'assets/models/SubwayScene.glb'
+            '/assets/models/SubwayScene.glb'
         );
         const scene = gltf.scene;
         scene.updateMatrixWorld(true);

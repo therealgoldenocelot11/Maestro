@@ -4,6 +4,7 @@ import MenuScene from './js/menuScene.js';
 import SettingsScene from './js/settingsScene.js';
 import JazzScene from './js/jazzScene.js';
 import TransitionScene from './js/transitionScene.js';
+import CreditsScene from './js/creditsScene.js';
 
 window.addEventListener('load', () => {
     const video = document.getElementById('introVideo');
@@ -82,7 +83,7 @@ function startGame() {
             width: 1280,
             height: 720,
         },
-        scene: [MenuScene, SettingsScene, JazzScene, TransitionScene],
+        scene: [MenuScene, SettingsScene, JazzScene, TransitionScene, CreditsScene],
         ...Canvas(),
     };
 

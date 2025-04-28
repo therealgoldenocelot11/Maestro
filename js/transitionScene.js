@@ -95,6 +95,8 @@ export default class TransitionScene extends Phaser.Scene {
 
                 this.dieSprite.on('animationcomplete', () => {
                     this.dieSprite.destroy();
+                    this.scene.stop('TransitionScene');
+                    this.scene.start('CreditsScene');
                 });
             });
         });
